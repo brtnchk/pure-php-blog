@@ -18,8 +18,8 @@ PDO, сервисный слой, шаблонизатор Smarty, SCSS-стил
 ```bash
 cp .env.example .env
 docker compose up -d --build
-# схема накатывается автоматически из database/schema.sql при первом старте mysql
-docker compose exec php php database/seed.php
+docker compose exec php php database/migrate.php   # создать таблицы
+docker compose exec php php database/seed.php      # наполнить демо-данными
 # открыть http://localhost:8080
 ```
 
@@ -32,16 +32,34 @@ npm run build       # либо: npm run watch
 
 ## Локальный запуск без Docker
 
-Требуется PHP 8.2+ и доступ к MySQL.
+Требуется PHP 8.2+ и доступ к MySQL (создайте пустую БД).
 
 ```bash
 composer install
-mysql -u root -p < database/schema.sql
-# Поправьте .env под локальные креды БД
+# Поправьте .env под локальные креды БД (DB_NAME должен существовать)
+php database/migrate.php
 php database/seed.php
 php -S localhost:8080 -t public
 # открыть http://localhost:8080
 ```
+
+## Миграции
+
+Источник истины для схемы — миграции в `database/migrations/`. Каждый
+файл возвращает `new class implements App\Database\Migration { up(), down() }`.
+`App\Database\Migrator` ведёт таблицу `migrations` с батч-номерами,
+поэтому повторный `migrate` ничего не делает, а `rollback` корректно
+откатывает только последний накат.
+
+```bash
+php database/migrate.php             # применить все недостающие миграции
+php database/migrate.php status      # показать какие применены, какие — нет
+php database/migrate.php rollback    # откатить последний батч
+php database/migrate.php fresh       # снести всё и накатить заново
+```
+
+Чтобы добавить таблицу — создайте `database/migrations/<timestamp>_<name>.php`
+с интерфейсом `Migration`, миграция подхватится при следующем `migrate`.
 
 ## Структура проекта
 
@@ -69,13 +87,22 @@ php -S localhost:8080 -t public
 │   ├── Category/
 │   │   ├── CategoryRepository.php
 │   │   └── CategoryService.php   # сборка секций для главной
+│   ├── Database/
+│   │   ├── Migration.php         # интерфейс up(PDO) / down(PDO)
+│   │   ├── Migrator.php          # обнаружение, накат, rollback, fresh, status
+│   │   ├── Slugifier.php         # транслит RU → латиница
+│   │   ├── CategorySeeder.php    # INSERT в categories
+│   │   ├── ArticleSeeder.php     # INSERT в articles + pivot
+│   │   └── DatabaseSeeder.php    # оркестратор: truncate + 2 сидера
 │   └── Controllers/              # тонкие: парсят request → зовут сервис
 ├── templates/                    # Smarty (.tpl) с {extends}
 ├── templates_c/                  # скомпилированные шаблоны Smarty
 ├── scss/                         # исходники стилей
 ├── database/
-│   ├── schema.sql                # таблицы categories, articles, article_category
-│   └── seed.php                  # CLI-сидер
+│   ├── migrate.php               # CLI: migrate / rollback / status / fresh
+│   ├── migrations/               # файлы миграций (по одной таблице)
+│   ├── seed.php                  # CLI-сидер
+│   └── seeds/                    # данные для сидера (categories.php, articles.php)
 └── docker/                       # nginx + php-fpm 8.2
 ```
 
