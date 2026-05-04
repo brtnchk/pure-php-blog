@@ -1,3 +1,4 @@
+
 # Блог на чистом PHP + Smarty + MySQL
 
 Тестовое задание: простой, но полностью рабочий блог с категориями и статьями.
@@ -51,11 +52,11 @@ php -S localhost:8080 -t public
 │   ├── .htaccess            # rewrite на index.php
 │   ├── css/main.css         # скомпилированный SCSS
 │   └── uploads/             # картинки статей
-├── src/
-│   ├── autoload.php         # PSR-4 fallback (если без composer)
-│   ├── Config/config.php    # конфиг + парсер .env
-│   ├── Core/                # Database, Router, View(Smarty), Controller, Model
-│   ├── Models/              # Category, Article
+├── app/                     # пространство имён App\, см. composer.json
+│   ├── Config/config.php    # конфиг (плоская карта над App\Core\Env)
+│   ├── Core/                # Container, Database, Env, Router, View, Controller
+│   ├── Article/             # ArticleRepository + ArticleService
+│   ├── Category/            # CategoryRepository + CategoryService
 │   └── Controllers/         # Home, Category, Article, Error
 ├── templates/               # Smarty (.tpl)
 ├── templates_c/             # скомпилированные шаблоны Smarty

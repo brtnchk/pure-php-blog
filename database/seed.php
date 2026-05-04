@@ -9,12 +9,9 @@ if (PHP_SAPI !== 'cli') {
     exit(1);
 }
 
-if (is_file($root . '/vendor/autoload.php')) {
-    require $root . '/vendor/autoload.php';
-}
-require $root . '/src/autoload.php';
+require $root . '/vendor/autoload.php';
 
-$config = require $root . '/src/Config/config.php';
+$config = require $root . '/app/Config/config.php';
 $pdo    = Database::connection($config['db']);
 
 echo "Seeding database '{$config['db']['name']}' on {$config['db']['host']}...\n";

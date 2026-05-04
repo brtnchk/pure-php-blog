@@ -7,12 +7,9 @@ use App\Core\View;
 
 $root = dirname(__DIR__);
 
-if (is_file($root . '/vendor/autoload.php')) {
-    require $root . '/vendor/autoload.php';
-}
-require $root . '/src/autoload.php';
+require $root . '/vendor/autoload.php';
 
-$config = require $root . '/src/Config/config.php';
+$config = require $root . '/app/Config/config.php';
 
 if ($config['app']['debug']) {
     error_reporting(E_ALL);
