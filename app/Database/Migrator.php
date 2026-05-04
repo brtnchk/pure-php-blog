@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Database;
 
@@ -22,9 +20,10 @@ use RuntimeException;
 final class Migrator
 {
     public function __construct(
-        private readonly PDO $db,
-        private readonly string $migrationsDir,
-    ) {}
+        private PDO $db,
+        private string $migrationsDir,
+    ) {
+    }
 
     public function migrate(): int
     {
@@ -113,32 +112,34 @@ final class Migrator
         );
     }
 
-    /** @return array<string, string>  name → file path */
     private function pending(): array
     {
         $applied = $this->appliedNames();
+
         return array_diff_key($this->discoverAll(), $applied);
     }
 
-    /** @return array<string, string>  name → file path */
     private function discoverAll(): array
     {
         if (!is_dir($this->migrationsDir)) {
             return [];
         }
+
         $files = glob($this->migrationsDir . '/*.php') ?: [];
         sort($files);
         $result = [];
+
         foreach ($files as $file) {
             $result[basename($file, '.php')] = $file;
         }
+
         return $result;
     }
 
-    /** @return array<string, true> */
     private function appliedNames(): array
     {
         $names = $this->db->query('SELECT name FROM migrations')->fetchAll(PDO::FETCH_COLUMN);
+
         return array_fill_keys($names, true);
     }
 
@@ -147,15 +148,17 @@ final class Migrator
         return ((int) $this->db->query('SELECT COALESCE(MAX(batch), 0) FROM migrations')->fetchColumn()) + 1;
     }
 
-    /** @return array<int, string>  names of last batch in insertion order */
     private function lastBatchMigrations(): array
     {
         $batch = (int) $this->db->query('SELECT COALESCE(MAX(batch), 0) FROM migrations')->fetchColumn();
+
         if ($batch === 0) {
             return [];
         }
+
         $stmt = $this->db->prepare('SELECT name FROM migrations WHERE batch = :b ORDER BY id ASC');
         $stmt->execute(['b' => $batch]);
+
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
@@ -174,6 +177,7 @@ final class Migrator
     private function load(string $file): Migration
     {
         $migration = require $file;
+
         if (!$migration instanceof Migration) {
             throw new RuntimeException(
                 "Migration file {$file} must return an instance of " . Migration::class

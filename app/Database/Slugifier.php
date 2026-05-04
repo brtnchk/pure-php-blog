@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Database;
 
@@ -21,6 +19,7 @@ final class Slugifier
         $value = mb_strtolower($title);
         $value = strtr($value, self::TRANSLIT);
         $value = preg_replace('/[^a-z0-9]+/u', '-', $value);
+
         return trim((string) $value, '-');
     }
 }

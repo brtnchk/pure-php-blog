@@ -1,48 +1,53 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Database;
 
 use PDO;
+use RuntimeException;
 
-/**
- * Orchestrates the full seeding pipeline:
- *   1) truncates dependent tables in the correct order;
- *   2) inserts categories and gets back a slug → id map;
- *   3) inserts articles + many-to-many links by category slug.
- */
 final class DatabaseSeeder
 {
-    private const TABLES_TO_CLEAR = ['article_category', 'articles', 'categories'];
-
-    /**
-     * @param array<int, array{name:string, slug:string, description:?string}> $categories
-     * @param array<int, array{title:string, cats:array<int,string>}> $articles
-     */
     public function __construct(
-        private readonly PDO $db,
-        private readonly array $categories,
-        private readonly array $articles,
-    ) {}
+        private PDO $db,
+        private string $seedsDir,
+    ) {
+    }
 
     public function run(): void
     {
-        $this->truncate();
+        $this->db->exec('SET FOREIGN_KEY_CHECKS = 0');
 
-        $categoryIds = (new CategorySeeder($this->db))->seed($this->categories);
-        echo '  + ' . count($categoryIds) . " categories\n";
+        try {
+            $context = [];
+            foreach ($this->discover() as $name => $file) {
+                $seeder = require $file;
+                if (!$seeder instanceof Seeder) {
+                    throw new RuntimeException(
+                        "Seed file {$file} must return an instance of " . Seeder::class
+                    );
+                }
 
-        $inserted = (new ArticleSeeder($this->db))->seed($this->articles, $categoryIds);
-        echo "  + {$inserted} articles (with category links)\n";
+                $context = array_replace($context, $seeder->run($this->db, $context));
+            }
+        } finally {
+            $this->db->exec('SET FOREIGN_KEY_CHECKS = 1');
+        }
     }
 
-    private function truncate(): void
+    private function discover(): array
     {
-        $this->db->exec('SET FOREIGN_KEY_CHECKS = 0');
-        foreach (self::TABLES_TO_CLEAR as $table) {
-            $this->db->exec("TRUNCATE TABLE {$table}");
+        if (!is_dir($this->seedsDir)) {
+            return [];
         }
-        $this->db->exec('SET FOREIGN_KEY_CHECKS = 1');
+
+        $files = glob($this->seedsDir . '/*.php') ?: [];
+        sort($files);
+
+        $result = [];
+        foreach ($files as $file) {
+            $result[basename($file, '.php')] = $file;
+        }
+
+        return $result;
     }
 }

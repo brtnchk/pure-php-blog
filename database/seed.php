@@ -12,14 +12,10 @@ $root = dirname(__DIR__);
 require $root . '/vendor/autoload.php';
 
 $config = require $root . '/app/Config/config.php';
-$pdo    = Database::connection($config['db']);
+$pdo = Database::connection($config['db']);
 
 echo "Seeding database '{$config['db']['name']}' on {$config['db']['host']}...\n";
 
-(new DatabaseSeeder(
-    $pdo,
-    require __DIR__ . '/seeds/categories.php',
-    require __DIR__ . '/seeds/articles.php',
-))->run();
+(new DatabaseSeeder($pdo, __DIR__ . '/seeds'))->run();
 
 echo "Done.\n";
