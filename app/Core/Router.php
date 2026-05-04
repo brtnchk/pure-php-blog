@@ -9,6 +9,8 @@ final class Router
     /** @var array<int, array{pattern: string, handler: callable|array}> */
     private array $routes = [];
 
+    public function __construct(private readonly Container $container) {}
+
     public function get(string $pattern, callable|array $handler): void
     {
         $this->routes[] = ['pattern' => $pattern, 'handler' => $handler];
@@ -42,7 +44,7 @@ final class Router
     {
         if (is_array($handler)) {
             [$class, $method] = $handler;
-            $instance = new $class();
+            $instance = $this->container->get($class);
             return $instance->{$method}(...array_values($params));
         }
         return $handler(...array_values($params));

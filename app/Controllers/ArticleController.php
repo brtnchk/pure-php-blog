@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Core\Container;
+use App\Article\ArticleService;
 use App\Core\Controller;
 
 final class ArticleController extends Controller
 {
+    public function __construct(private readonly ArticleService $articles) {}
+
     public function show(string $slug): string
     {
-        $view = Container::instance()
-            ->articleService()
-            ->getArticleView($slug, 3);
-
+        $view = $this->articles->getArticleView($slug, 3);
         if ($view === null) {
             return $this->notFound();
         }

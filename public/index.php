@@ -19,11 +19,12 @@ if ($config['app']['debug']) {
     ini_set('display_errors', '0');
 }
 
-$pdo = Database::connection($config['db']);
-Container::boot($pdo);
 View::smarty($config);
 
-$router = new Router();
+$container = new Container();
+$container->bind(PDO::class, static fn () => Database::connection($config['db']));
+
+$router = new Router($container);
 $registerRoutes = require $root . '/routes/web.php';
 $registerRoutes($router);
 

@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Core;
 
@@ -12,15 +10,18 @@ final class Env
     public static function load(string $file): void
     {
         $values = [];
+
         if (is_readable($file)) {
             foreach (file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
                 if ($line === '' || $line[0] === '#') {
                     continue;
                 }
+
                 [$k, $v] = array_pad(explode('=', $line, 2), 2, '');
                 $values[trim($k)] = trim($v);
             }
         }
+
         self::$values = $values;
     }
 
@@ -29,25 +30,31 @@ final class Env
         if (self::$values === null) {
             self::$values = [];
         }
+
         if (array_key_exists($key, self::$values)) {
             return self::$values[$key];
         }
+
         $fromSystem = getenv($key);
+
         return $fromSystem !== false ? $fromSystem : $default;
     }
 
     public static function bool(string $key, bool $default = false): bool
     {
         $value = self::get($key);
+
         if ($value === null) {
             return $default;
         }
+
         return filter_var($value, FILTER_VALIDATE_BOOL);
     }
 
     public static function int(string $key, int $default = 0): int
     {
         $value = self::get($key);
+
         return $value === null ? $default : (int) $value;
     }
 }

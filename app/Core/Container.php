@@ -4,62 +4,92 @@ declare(strict_types=1);
 
 namespace App\Core;
 
-use App\Article\ArticleRepository;
-use App\Article\ArticleService;
-use App\Category\CategoryRepository;
-use App\Category\CategoryService;
-use PDO;
+use Closure;
+use ReflectionClass;
+use ReflectionNamedType;
 use RuntimeException;
 
 /**
- * Tiny service locator. Composition root for the app — here we wire
- * repositories into services. Anything that needs ArticleService etc. asks
- * the container instead of constructing collaborators by hand.
+ * Tiny DI container with constructor autowiring.
+ *
+ *  - get(Class::class) lazily resolves a class by reflecting its constructor
+ *    and recursively resolving each parameter by its type hint.
+ *  - bind(Class::class, fn ($c) => ...) registers an explicit factory for
+ *    things that cannot be autowired (PDO, anything that needs config).
+ *  - resolved instances are memoized — same id always returns the same object.
  */
 final class Container
 {
-    private static ?self $instance = null;
-
-    /** @var array<string,object> */
+    /** @var array<class-string, object> */
     private array $instances = [];
 
-    private function __construct(private readonly PDO $pdo) {}
+    /** @var array<class-string, Closure> */
+    private array $factories = [];
 
-    public static function boot(PDO $pdo): self
+    public function bind(string $id, Closure $factory): void
     {
-        self::$instance = new self($pdo);
-        return self::$instance;
+        $this->factories[$id] = $factory;
+        unset($this->instances[$id]);
     }
 
-    public static function instance(): self
+    /**
+     * @template T of object
+     * @param class-string<T> $id
+     * @return T
+     */
+    public function get(string $id): object
     {
-        if (self::$instance === null) {
-            throw new RuntimeException('Container has not been booted.');
+        if (isset($this->instances[$id])) {
+            /** @var T */
+            return $this->instances[$id];
         }
-        return self::$instance;
+
+        if (isset($this->factories[$id])) {
+            /** @var T */
+            return $this->instances[$id] = ($this->factories[$id])($this);
+        }
+
+        /** @var T */
+        return $this->instances[$id] = $this->autowire($id);
     }
 
-    public function articleRepository(): ArticleRepository
+    private function autowire(string $class): object
     {
-        return $this->instances[ArticleRepository::class]
-            ??= new ArticleRepository($this->pdo);
-    }
+        if (!class_exists($class)) {
+            throw new RuntimeException("Container: class {$class} does not exist.");
+        }
 
-    public function categoryRepository(): CategoryRepository
-    {
-        return $this->instances[CategoryRepository::class]
-            ??= new CategoryRepository($this->pdo);
-    }
+        $reflection = new ReflectionClass($class);
+        if (!$reflection->isInstantiable()) {
+            throw new RuntimeException("Container: {$class} is not instantiable.");
+        }
 
-    public function articleService(): ArticleService
-    {
-        return $this->instances[ArticleService::class]
-            ??= new ArticleService($this->articleRepository());
-    }
+        $constructor = $reflection->getConstructor();
+        if ($constructor === null) {
+            return new $class();
+        }
 
-    public function categoryService(): CategoryService
-    {
-        return $this->instances[CategoryService::class]
-            ??= new CategoryService($this->categoryRepository(), $this->articleRepository());
+        $args = [];
+        foreach ($constructor->getParameters() as $param) {
+            $type = $param->getType();
+
+            if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
+                $args[] = $this->get($type->getName());
+                continue;
+            }
+
+            if ($param->isDefaultValueAvailable()) {
+                $args[] = $param->getDefaultValue();
+                continue;
+            }
+
+            throw new RuntimeException(sprintf(
+                'Container: cannot resolve parameter $%s of %s — no type hint and no default.',
+                $param->getName(),
+                $class,
+            ));
+        }
+
+        return $reflection->newInstanceArgs($args);
     }
 }

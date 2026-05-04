@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Article;
 
@@ -8,7 +6,10 @@ use PDO;
 
 final class ArticleRepository
 {
-    public function __construct(private readonly PDO $db) {}
+    public function __construct(
+        private PDO $db,
+    ) {
+    }
 
     public function findBySlug(string $slug): ?array
     {
@@ -18,12 +19,10 @@ final class ArticleRepository
         );
         $stmt->execute(['slug' => $slug]);
         $row = $stmt->fetch();
+
         return $row ?: null;
     }
 
-    /**
-     * @return array<int, array<string,mixed>>
-     */
     public function categoriesOf(int $articleId): array
     {
         $stmt = $this->db->prepare(
@@ -34,13 +33,10 @@ final class ArticleRepository
              ORDER BY c.name ASC'
         );
         $stmt->execute(['id' => $articleId]);
+
         return $stmt->fetchAll();
     }
 
-    /**
-     * @param array<int,int> $categoryIds
-     * @return array<int, array<int, array<string,mixed>>>  keyed by category_id
-     */
     public function recentByCategories(array $categoryIds, int $limit): array
     {
         if ($categoryIds === []) {
@@ -64,9 +60,11 @@ final class ArticleRepository
         $stmt->execute($params);
 
         $grouped = [];
+
         foreach ($stmt->fetchAll() as $row) {
             $grouped[(int) $row['category_id']][] = $row;
         }
+
         return $grouped;
     }
 
@@ -77,13 +75,12 @@ final class ArticleRepository
              INNER JOIN article_category ac ON ac.article_id = a.id
              WHERE ac.category_id = :cid'
         );
+
         $stmt->execute(['cid' => $categoryId]);
+
         return (int) $stmt->fetchColumn();
     }
 
-    /**
-     * @return array<int, array<string,mixed>>
-     */
     public function listByCategory(int $categoryId, string $orderBy, int $limit, int $offset): array
     {
         $sql = "SELECT a.id, a.title, a.slug, a.description, a.image, a.views, a.published_at
@@ -97,12 +94,10 @@ final class ArticleRepository
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
+
         return $stmt->fetchAll();
     }
 
-    /**
-     * @return array<int, array<string,mixed>>
-     */
     public function similar(int $articleId, int $limit): array
     {
         $sql = 'SELECT a.id, a.title, a.slug, a.description, a.image, a.views, a.published_at,
@@ -119,6 +114,7 @@ final class ArticleRepository
         $stmt->bindValue(':id', $articleId, PDO::PARAM_INT);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
+
         return $stmt->fetchAll();
     }
 

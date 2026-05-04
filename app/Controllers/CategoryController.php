@@ -5,28 +5,30 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Article\ArticleService;
-use App\Core\Container;
+use App\Category\CategoryService;
 use App\Core\Controller;
 
 final class CategoryController extends Controller
 {
+    public function __construct(
+        private readonly CategoryService $categories,
+        private readonly ArticleService $articles,
+    ) {}
+
     public function show(string $slug): string
     {
-        $container = Container::instance();
-
-        $category = $container->categoryService()->findBySlug($slug);
+        $category = $this->categories->findBySlug($slug);
         if ($category === null) {
             return $this->notFound();
         }
 
-        $articleService = $container->articleService();
-        $sort = $articleService->normalizeSort($_GET['sort'] ?? null);
+        $sort = $this->articles->normalizeSort($_GET['sort'] ?? null);
         $page = $this->intParam($_GET['page'] ?? null, 1, 1);
 
         $config  = require dirname(__DIR__) . '/Config/config.php';
         $perPage = (int) $config['pagination']['per_page'];
 
-        $listing = $articleService->listForCategory((int) $category['id'], $sort, $page, $perPage);
+        $listing = $this->articles->listForCategory((int) $category['id'], $sort, $page, $perPage);
 
         return $this->render('category.tpl', [
             'category'   => $category,
