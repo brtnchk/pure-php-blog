@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Database;
+namespace App\Core;
 
 use PDO;
 use RuntimeException;
@@ -15,7 +15,7 @@ use RuntimeException;
  *  - fresh()    rolls everything back, then re-applies all migrations.
  *  - status()   reports applied/pending state of every known migration.
  *
- * Migration files must `return new class implements App\Database\Migration {...};`.
+ * Migration files must `return new class implements App\Core\Migration {...};`.
  */
 final class Migrator
 {

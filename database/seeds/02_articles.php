@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
-use App\Database\Seeder;
-use App\Database\Slugifier;
+use App\Core\Seeder;
+use App\Core\Slugifier;
 
 return new class implements Seeder {
     private const HOURS_BETWEEN_POSTS = 2;
@@ -47,18 +47,15 @@ return new class implements Seeder {
              VALUES (:article_id, :category_id)'
         );
 
-        $body = $this->makeBody();
-        $now  = time();
-
         foreach ($rows as $i => $row) {
             $articleStmt->execute([
                 'title' => $row['title'],
                 'slug' => Slugifier::slugify($row['title']) . '-' . ($i + 1),
                 'description'  => 'Краткое описание: ' . $row['title'] . '.',
-                'content' => $body,
+                'content' => $this->makeBody(),
                 'image' => null,
                 'views' => random_int(0, 500),
-                'published_at' => date('Y-m-d H:i:s', $now - $i * self::HOURS_BETWEEN_POSTS * 3600),
+                'published_at' => date('Y-m-d H:i:s', time() - $i * self::HOURS_BETWEEN_POSTS * 3600),
             ]);
 
             $articleId = (int) $db->lastInsertId();
@@ -69,7 +66,7 @@ return new class implements Seeder {
                 }
 
                 $linkStmt->execute([
-                    'article_id'  => $articleId,
+                    'article_id' => $articleId,
                     'category_id' => $categoryIds[$catSlug],
                 ]);
             }

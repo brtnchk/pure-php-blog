@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 use App\Core\Database;
-use App\Database\Migrator;
+use App\Core\Migrator;
 
 if (PHP_SAPI !== 'cli') {
     fwrite(STDERR, "This script must be run from the command line.\n");
@@ -12,10 +12,10 @@ $root = dirname(__DIR__);
 require $root . '/vendor/autoload.php';
 
 $config = require $root . '/app/Config/config.php';
-$pdo    = Database::connection($config['db']);
+$pdo = Database::connection($config['db']);
 
 $migrator = new Migrator($pdo, __DIR__ . '/migrations');
-$action   = $argv[1] ?? 'migrate';
+$action = $argv[1] ?? 'migrate';
 
 switch ($action) {
     case 'migrate':

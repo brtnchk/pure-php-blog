@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 use App\Core\Database;
-use App\Database\DatabaseSeeder;
+use App\Core\DatabaseSeeder;
 
 if (PHP_SAPI !== 'cli') {
     fwrite(STDERR, "This script must be run from the command line.\n");

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Database;
+namespace App\Core;
 
 final class Slugifier
 {

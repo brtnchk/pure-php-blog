@@ -23,7 +23,6 @@ final class View
         $smarty = new Smarty();
         $smarty->setTemplateDir($config['paths']['templates']);
         $smarty->setCompileDir($config['paths']['compile']);
-        $smarty->setCacheDir($config['paths']['cache']);
         $smarty->caching = Smarty::CACHING_OFF;
         $smarty->setEscapeHtml(true);
 

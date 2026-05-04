@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use App\Database\Seeder;
+use App\Core\Seeder;
 
 return new class implements Seeder {
     public function run(PDO $db, array $context): array

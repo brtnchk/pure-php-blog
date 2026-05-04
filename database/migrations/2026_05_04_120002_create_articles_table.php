@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Database\Migration;
+use App\Core\Migration;
 
 return new class implements Migration {
     public function up(PDO $db): void

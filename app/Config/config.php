@@ -21,7 +21,6 @@ return [
     'paths' => [
         'templates' => dirname(__DIR__, 2) . '/templates',
         'compile' => dirname(__DIR__, 2) . '/templates_c',
-        'cache' => dirname(__DIR__, 2) . '/cache',
         'public' => dirname(__DIR__, 2) . '/public',
     ],
     'pagination' => [
