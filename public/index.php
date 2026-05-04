@@ -27,9 +27,6 @@ Database::connection($config['db']);
 View::smarty($config);
 
 $router = new Router();
-
-$router->get('/',                       [\App\Controllers\HomeController::class,     'index']);
-$router->get('/category/{slug}',        [\App\Controllers\CategoryController::class, 'show']);
-$router->get('/article/{slug}',         [\App\Controllers\ArticleController::class,  'show']);
+(require $root . '/routes/web.php')($router);
 
 echo $router->dispatch($_SERVER['REQUEST_URI'] ?? '/');
