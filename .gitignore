@@ -1,0 +1,16 @@
+/vendor/
+/templates_c/*
+!/templates_c/.gitkeep
+/cache/*
+!/cache/.gitkeep
+/public/uploads/*
+!/public/uploads/.gitkeep
+.env
+.env.local
+.DS_Store
+.idea/
+.vscode/
+composer.lock
+*.log
+node_modules/
+/public/css/*.map
