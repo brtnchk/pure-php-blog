@@ -15,7 +15,7 @@
             <h1 class="article__title">{$article.title}</h1>
             <div class="article__meta">
                 <time datetime="{$article.published_at}">
-                    {$article.published_at|date_format:"%d.%m.%Y"}
+                    {$article.published_at|date_format:"d.m.Y"}
                 </time>
                 <span>{$article.views} просмотр.</span>
             </div>

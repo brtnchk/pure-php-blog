@@ -3,8 +3,8 @@
     "description": "Simple blog on pure PHP with MySQL and Smarty",
     "type": "project",
     "require": {
-        "php": ">=8.1",
-        "smarty/smarty": "^4.3",
+        "php": ">=8.2",
+        "smarty/smarty": "^5.4",
         "ext-pdo": "*",
         "ext-pdo_mysql": "*"
     },

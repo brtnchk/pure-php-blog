@@ -23,7 +23,7 @@
 
 <footer class="site-footer">
     <div class="container">
-        <small>&copy; {$smarty.now|date_format:"%Y"} Блог на чистом PHP + Smarty</small>
+        <small>&copy; {$smarty.now|date_format:"Y"} Блог на чистом PHP + Smarty</small>
     </div>
 </footer>
 

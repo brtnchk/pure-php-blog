@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Models;
 
@@ -9,8 +7,8 @@ use InvalidArgumentException;
 
 final class Article extends Model
 {
-    public const SORT_DATE  = 'date';
-    public const SORT_VIEWS = 'views';
+    const SORT_DATE  = 'date';
+    const SORT_VIEWS = 'views';
 
     public function findBySlug(string $slug): ?array
     {

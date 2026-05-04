@@ -6,7 +6,7 @@
 
 ## Стек
 
-- PHP 8.1+ (тестировалось на 8.2)
+- PHP 8.2+ (Docker-образ — `php:8.2-fpm-alpine`)
 - MySQL 8 (используются оконные функции)
 - Шаблонизатор Smarty 4
 - Сборка стилей: SCSS (Dart Sass) → `public/css/main.css`
@@ -31,7 +31,7 @@ npm run build       # либо: npm run watch
 
 ## Локальный запуск без Docker
 
-Требуется PHP 8.1+ и доступ к MySQL.
+Требуется PHP 8.2+ и доступ к MySQL.
 
 ```bash
 composer install

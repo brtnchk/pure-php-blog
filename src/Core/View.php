@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core;
 
-use Smarty;
+use Smarty\Smarty;
 use RuntimeException;
 
 final class View
