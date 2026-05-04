@@ -1,9 +1,8 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Core;
 
+use Smarty\Exception;
 use Smarty\Smarty;
 use RuntimeException;
 
@@ -35,15 +34,18 @@ final class View
         return $smarty;
     }
 
+    /** @throws Exception */
     public static function render(string $template, array $data = []): string
     {
         $smarty = self::$smarty;
         if ($smarty === null) {
             throw new RuntimeException('Smarty not bootstrapped');
         }
+
         foreach ($data as $key => $value) {
             $smarty->assign($key, $value);
         }
+
         return $smarty->fetch($template);
     }
 }

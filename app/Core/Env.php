@@ -4,7 +4,6 @@ namespace App\Core;
 
 final class Env
 {
-    /** @var array<string,string>|null */
     private static ?array $values = null;
 
     public static function load(string $file): void

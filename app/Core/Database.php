@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace App\Core;
 
@@ -28,19 +26,14 @@ final class Database
 
         try {
             self::$pdo = new PDO($dsn, $config['user'], $config['pass'], [
-                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES   => false,
+                PDO::ATTR_EMULATE_PREPARES => false,
             ]);
         } catch (PDOException $e) {
             throw new RuntimeException('Database connection failed: ' . $e->getMessage(), 0, $e);
         }
 
         return self::$pdo;
-    }
-
-    public static function reset(): void
-    {
-        self::$pdo = null;
     }
 }
