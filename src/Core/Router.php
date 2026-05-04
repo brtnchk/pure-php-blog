@@ -18,9 +18,6 @@ final class Router
     {
         $path = parse_url($uri, PHP_URL_PATH) ?: '/';
         $path = '/' . trim($path, '/');
-        if ($path === '/') {
-            $path = '/';
-        }
 
         foreach ($this->routes as $route) {
             $regex = $this->compile($route['pattern']);
@@ -37,6 +34,7 @@ final class Router
     private function compile(string $pattern): string
     {
         $regex = preg_replace('#\{(\w+)\}#', '(?P<$1>[^/]+)', $pattern);
+
         return '#^' . $regex . '$#';
     }
 

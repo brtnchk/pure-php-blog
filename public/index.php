@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 use App\Core\Database;
 use App\Core\Router;
@@ -27,6 +25,7 @@ Database::connection($config['db']);
 View::smarty($config);
 
 $router = new Router();
-(require $root . '/routes/web.php')($router);
+$registerRoutes = require $root . '/routes/web.php';
+$registerRoutes($router);
 
 echo $router->dispatch($_SERVER['REQUEST_URI'] ?? '/');
