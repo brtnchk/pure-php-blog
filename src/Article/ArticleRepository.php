@@ -1,14 +1,14 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace App\Models;
+declare(strict_types=1);
 
-use App\Core\Model;
-use InvalidArgumentException;
+namespace App\Article;
 
-final class Article extends Model
+use PDO;
+
+final class ArticleRepository
 {
-    const SORT_DATE  = 'date';
-    const SORT_VIEWS = 'views';
+    public function __construct(private readonly PDO $db) {}
 
     public function findBySlug(string $slug): ?array
     {
@@ -38,12 +38,10 @@ final class Article extends Model
     }
 
     /**
-     * For each given category id return up to $limit recent articles.
-     *
      * @param array<int,int> $categoryIds
      * @return array<int, array<int, array<string,mixed>>>  keyed by category_id
      */
-    public function recentByCategories(array $categoryIds, int $limit = 3): array
+    public function recentByCategories(array $categoryIds, int $limit): array
     {
         if ($categoryIds === []) {
             return [];
@@ -72,31 +70,22 @@ final class Article extends Model
         return $grouped;
     }
 
-    /**
-     * Articles in a category with sorting & pagination.
-     *
-     * @return array{items: array<int, array<string,mixed>>, total: int, pages: int, page: int, per_page: int}
-     */
-    public function listByCategory(int $categoryId, string $sort, int $page, int $perPage): array
+    public function countByCategory(int $categoryId): int
     {
-        $orderBy = match ($sort) {
-            self::SORT_VIEWS => 'a.views DESC, a.published_at DESC',
-            self::SORT_DATE  => 'a.published_at DESC, a.id DESC',
-            default          => throw new InvalidArgumentException("Unknown sort: $sort"),
-        };
-
-        $countStmt = $this->db->prepare(
+        $stmt = $this->db->prepare(
             'SELECT COUNT(*) FROM articles a
              INNER JOIN article_category ac ON ac.article_id = a.id
              WHERE ac.category_id = :cid'
         );
-        $countStmt->execute(['cid' => $categoryId]);
-        $total = (int) $countStmt->fetchColumn();
+        $stmt->execute(['cid' => $categoryId]);
+        return (int) $stmt->fetchColumn();
+    }
 
-        $pages  = (int) max(1, ceil($total / $perPage));
-        $page   = max(1, min($page, $pages));
-        $offset = ($page - 1) * $perPage;
-
+    /**
+     * @return array<int, array<string,mixed>>
+     */
+    public function listByCategory(int $categoryId, string $orderBy, int $limit, int $offset): array
+    {
         $sql = "SELECT a.id, a.title, a.slug, a.description, a.image, a.views, a.published_at
                 FROM articles a
                 INNER JOIN article_category ac ON ac.article_id = a.id
@@ -104,27 +93,17 @@ final class Article extends Model
                 ORDER BY $orderBy
                 LIMIT :limit OFFSET :offset";
         $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':cid', $categoryId, \PDO::PARAM_INT);
-        $stmt->bindValue(':limit', $perPage, \PDO::PARAM_INT);
-        $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
+        $stmt->bindValue(':cid', $categoryId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
-
-        return [
-            'items'    => $stmt->fetchAll(),
-            'total'    => $total,
-            'pages'    => $pages,
-            'page'     => $page,
-            'per_page' => $perPage,
-        ];
+        return $stmt->fetchAll();
     }
 
     /**
-     * Articles that share at least one category with the given article,
-     * ranked by number of shared categories then recency.
-     *
      * @return array<int, array<string,mixed>>
      */
-    public function similar(int $articleId, int $limit = 3): array
+    public function similar(int $articleId, int $limit): array
     {
         $sql = 'SELECT a.id, a.title, a.slug, a.description, a.image, a.views, a.published_at,
                        COUNT(DISTINCT ac2.category_id) AS shared_count
@@ -137,8 +116,8 @@ final class Article extends Model
                 ORDER BY shared_count DESC, a.published_at DESC
                 LIMIT :limit';
         $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':id', $articleId, \PDO::PARAM_INT);
-        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->bindValue(':id', $articleId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll();
     }

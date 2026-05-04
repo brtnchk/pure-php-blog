@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Category;
 
-use App\Core\Model;
+use PDO;
 
-final class Category extends Model
+final class CategoryRepository
 {
+    public function __construct(private readonly PDO $db) {}
+
     public function findBySlug(string $slug): ?array
     {
         $stmt = $this->db->prepare(
@@ -19,8 +21,6 @@ final class Category extends Model
     }
 
     /**
-     * Returns categories that have at least one article, ordered by name.
-     *
      * @return array<int, array{id:int,name:string,slug:string,description:?string}>
      */
     public function listWithArticles(): array

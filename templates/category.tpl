@@ -17,8 +17,8 @@
     <form class="toolbar" method="get">
         <label for="sort">Сортировка:</label>
         <select id="sort" name="sort" onchange="this.form.submit()">
-            <option value="date"  {if $sort === 'date'}selected{/if}>По дате публикации</option>
-            <option value="views" {if $sort === 'views'}selected{/if}>По количеству просмотров</option>
+            <option value="{$sort_date}"  {if $sort === $sort_date}selected{/if}>По дате публикации</option>
+            <option value="{$sort_views}" {if $sort === $sort_views}selected{/if}>По количеству просмотров</option>
         </select>
         <noscript><button type="submit" class="btn">Применить</button></noscript>
     </form>

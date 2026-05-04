@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use App\Core\Container;
 use App\Core\Database;
 use App\Core\Router;
 use App\Core\View;
@@ -21,7 +22,8 @@ if ($config['app']['debug']) {
     ini_set('display_errors', '0');
 }
 
-Database::connection($config['db']);
+$pdo = Database::connection($config['db']);
+Container::boot($pdo);
 View::smarty($config);
 
 $router = new Router();

@@ -20,6 +20,7 @@ abstract class Controller
     protected function notFound(): string
     {
         http_response_code(404);
+
         return $this->render('404.tpl');
     }
 
