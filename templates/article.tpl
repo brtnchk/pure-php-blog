@@ -38,6 +38,10 @@
         <p class="article__lead">{$article.description}</p>
 
         <div class="article__body">
+            {* nofilter: content is stored as raw HTML so paragraphs and inline
+               formatting render. This is safe only as long as content is
+               author-controlled. If a public-facing editor is added later,
+               either sanitise on save or switch to a Markdown→HTML pipeline. *}
             {$article.content nofilter}
         </div>
 

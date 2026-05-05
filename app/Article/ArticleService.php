@@ -7,10 +7,7 @@ final class ArticleService
     public const SORT_DATE  = 'date';
     public const SORT_VIEWS = 'views';
 
-    private const ORDER_BY = [
-        self::SORT_DATE  => 'a.published_at DESC, a.id DESC',
-        self::SORT_VIEWS => 'a.views DESC, a.published_at DESC',
-    ];
+    private const ALLOWED_SORTS = [self::SORT_DATE, self::SORT_VIEWS];
 
     public function __construct(
         private ArticleRepository $articles,
@@ -19,13 +16,9 @@ final class ArticleService
 
     public function normalizeSort(?string $sort): string
     {
-        return isset(self::ORDER_BY[$sort]) ? $sort : self::SORT_DATE;
+        return in_array($sort, self::ALLOWED_SORTS, true) ? $sort : self::SORT_DATE;
     }
 
-    /**
-     * @param array<int,int> $categoryIds
-     * @return array<int, array<int, array<string,mixed>>>  keyed by category_id
-     */
     public function topInCategories(array $categoryIds, int $limit): array
     {
         return $this->articles->recentByCategories($categoryIds, $limit);
@@ -34,7 +27,6 @@ final class ArticleService
     public function listForCategory(int $categoryId, string $sort, int $page, int $perPage): array
     {
         $sort = $this->normalizeSort($sort);
-        $orderBy = self::ORDER_BY[$sort];
 
         $total = $this->articles->countByCategory($categoryId);
         $pages = (int) max(1, ceil($total / $perPage));
@@ -42,7 +34,7 @@ final class ArticleService
         $offset = ($page - 1) * $perPage;
 
         $items = $total > 0
-            ? $this->articles->listByCategory($categoryId, $orderBy, $perPage, $offset)
+            ? $this->articles->listByCategory($categoryId, $sort, $perPage, $offset)
             : [];
 
         return [

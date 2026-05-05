@@ -55,6 +55,7 @@ final class Migrator
         }
 
         foreach (array_reverse($latest) as $name) {
+            $this->assertSafeName($name);
             $file = $this->migrationsDir . '/' . $name . '.php';
             if (!is_file($file)) {
                 throw new RuntimeException("Migration file missing: {$file}");
@@ -88,6 +89,7 @@ final class Migrator
         )->fetchAll(PDO::FETCH_COLUMN);
 
         foreach ($applied as $name) {
+            $this->assertSafeName($name);
             $file = $this->migrationsDir . '/' . $name . '.php';
             if (is_file($file)) {
                 $this->load($file)->down($this->db);
@@ -184,5 +186,12 @@ final class Migrator
             );
         }
         return $migration;
+    }
+    
+    private function assertSafeName(string $name): void
+    {
+        if (preg_match('/^[A-Za-z0-9_-]+$/', $name) !== 1) {
+            throw new RuntimeException("Refusing to use migration name as a path: {$name}");
+        }
     }
 }

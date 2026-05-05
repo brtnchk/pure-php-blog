@@ -2,10 +2,20 @@
 
 namespace App\Article;
 
+use InvalidArgumentException;
 use PDO;
 
 final class ArticleRepository
 {
+    /**
+     * Whitelist of allowed sort keys → ORDER BY fragments.
+     * Lives here so the repo never trusts caller-supplied SQL strings.
+     */
+    private const ORDER_BY = [
+        'date'  => 'a.published_at DESC, a.id DESC',
+        'views' => 'a.views DESC, a.published_at DESC',
+    ];
+
     public function __construct(
         private PDO $db,
     ) {
@@ -42,6 +52,7 @@ final class ArticleRepository
         if ($categoryIds === []) {
             return [];
         }
+
         $placeholders = implode(',', array_fill(0, count($categoryIds), '?'));
 
         $sql = "SELECT * FROM (
@@ -81,8 +92,13 @@ final class ArticleRepository
         return (int) $stmt->fetchColumn();
     }
 
-    public function listByCategory(int $categoryId, string $orderBy, int $limit, int $offset): array
+    public function listByCategory(int $categoryId, string $sort, int $limit, int $offset): array
     {
+        if (!isset(self::ORDER_BY[$sort])) {
+            throw new InvalidArgumentException("Unknown sort key: {$sort}");
+        }
+        $orderBy = self::ORDER_BY[$sort];
+
         $sql = "SELECT a.id, a.title, a.slug, a.description, a.image, a.views, a.published_at
                 FROM articles a
                 INNER JOIN article_category ac ON ac.article_id = a.id
