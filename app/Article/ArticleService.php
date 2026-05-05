@@ -2,7 +2,7 @@
 
 namespace App\Article;
 
-final class ArticleService
+class ArticleService
 {
     public const SORT_DATE  = 'date';
     public const SORT_VIEWS = 'views';
@@ -10,7 +10,7 @@ final class ArticleService
     private const ALLOWED_SORTS = [self::SORT_DATE, self::SORT_VIEWS];
 
     public function __construct(
-        private ArticleRepository $articles,
+        private ArticleRepositoryInterface $articles,
     ) {
     }
 

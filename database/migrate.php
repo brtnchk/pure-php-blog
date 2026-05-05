@@ -21,19 +21,19 @@ switch ($action) {
     case 'migrate':
         echo "Migrating...\n";
         $n = $migrator->migrate();
-        echo "Done. ({$n} migration(s) applied)\n";
+        echo "Done. ($n migration(s) applied)\n";
         break;
 
     case 'rollback':
         echo "Rolling back the last batch...\n";
         $n = $migrator->rollback();
-        echo "Done. ({$n} migration(s) reverted)\n";
+        echo "Done. ($n migration(s) reverted)\n";
         break;
 
     case 'fresh':
         echo "Rolling back everything and re-applying...\n";
         $n = $migrator->fresh();
-        echo "Done. ({$n} migration(s) applied from scratch)\n";
+        echo "Done. ($n migration(s) applied from scratch)\n";
         break;
 
     case 'status':
@@ -43,7 +43,7 @@ switch ($action) {
         break;
 
     default:
-        fwrite(STDERR, "Unknown action: {$action}\n");
+        fwrite(STDERR, "Unknown action: $action\n");
         fwrite(STDERR, "Usage: php database/migrate.php [migrate|rollback|status|fresh]\n");
         exit(1);
 }

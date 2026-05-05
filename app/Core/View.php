@@ -30,6 +30,7 @@ final class View
         $smarty->assign('app_debug', $config['app']['debug']);
 
         self::$smarty = $smarty;
+
         return $smarty;
     }
 
@@ -37,6 +38,7 @@ final class View
     public static function render(string $template, array $data = []): string
     {
         $smarty = self::$smarty;
+
         if ($smarty === null) {
             throw new RuntimeException('Smarty not bootstrapped');
         }

@@ -5,7 +5,7 @@ namespace App\Article;
 use InvalidArgumentException;
 use PDO;
 
-final class ArticleRepository
+final class ArticleRepository implements ArticleRepositoryInterface
 {
     /**
      * Whitelist of allowed sort keys → ORDER BY fragments.

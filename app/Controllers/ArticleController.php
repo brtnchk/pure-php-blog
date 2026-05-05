@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Article\ArticleService;
 use App\Core\Controller;
+use Smarty\Exception;
 
 final class ArticleController extends Controller
 {
@@ -12,9 +13,10 @@ final class ArticleController extends Controller
     ) {
     }
 
+    /** @throws Exception */
     public function show(string $slug): string
     {
-        $view = $this->articles->getArticleView($slug, 3);
+        $view = $this->articles->getArticleView($slug);
 
         if ($view === null) {
             return $this->notFound();

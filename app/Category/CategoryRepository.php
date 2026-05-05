@@ -4,7 +4,7 @@ namespace App\Category;
 
 use PDO;
 
-final class CategoryRepository
+final class CategoryRepository implements CategoryRepositoryInterface
 {
     public function __construct(
         private PDO $db,

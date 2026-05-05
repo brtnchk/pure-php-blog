@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Category\CategoryService;
 use App\Core\Controller;
+use Smarty\Exception;
 
 final class CategoryController extends Controller
 {
@@ -12,6 +13,7 @@ final class CategoryController extends Controller
     ) {
     }
 
+    /** @throws Exception */
     public function show(string $slug): string
     {
         $view = $this->categories->getCategoryView(

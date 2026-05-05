@@ -8,6 +8,8 @@
 .DS_Store
 .idea/
 /[0-9]*.png
+.phpunit.cache/
+.phpunit.result.cache
 .vscode/
 composer.lock
 *.log
