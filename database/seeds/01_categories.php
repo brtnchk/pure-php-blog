@@ -28,6 +28,7 @@ return new class implements Seeder {
         }
 
         echo '  + ' . count($idsBySlug) . " categories\n";
+
         return ['categoryIds' => $idsBySlug];
     }
 };

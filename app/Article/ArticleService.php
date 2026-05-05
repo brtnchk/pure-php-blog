@@ -22,6 +22,15 @@ final class ArticleService
         return isset(self::ORDER_BY[$sort]) ? $sort : self::SORT_DATE;
     }
 
+    /**
+     * @param array<int,int> $categoryIds
+     * @return array<int, array<int, array<string,mixed>>>  keyed by category_id
+     */
+    public function topInCategories(array $categoryIds, int $limit): array
+    {
+        return $this->articles->recentByCategories($categoryIds, $limit);
+    }
+
     public function listForCategory(int $categoryId, string $sort, int $page, int $perPage): array
     {
         $sort = $this->normalizeSort($sort);

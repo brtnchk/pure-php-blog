@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 use App\Core\Migration;
 
@@ -9,15 +7,15 @@ return new class implements Migration {
     {
         $db->exec(
             'CREATE TABLE articles (
-                id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
-                title        VARCHAR(255) NOT NULL,
-                slug         VARCHAR(255) NOT NULL,
-                description  TEXT NOT NULL,
-                content      LONGTEXT NOT NULL,
-                image        VARCHAR(255) NULL,
-                views        INT UNSIGNED NOT NULL DEFAULT 0,
+                id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                title VARCHAR(255) NOT NULL,
+                slug VARCHAR(255) NOT NULL,
+                description TEXT NOT NULL,
+                content LONGTEXT NOT NULL,
+                image VARCHAR(255) NULL,
+                views INT UNSIGNED NOT NULL DEFAULT 0,
                 published_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                created_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id),
                 UNIQUE KEY uniq_articles_slug (slug),
                 KEY idx_articles_published_at (published_at),

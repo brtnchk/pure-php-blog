@@ -15,19 +15,4 @@ abstract class Controller
 
         return $this->render('404.tpl');
     }
-
-    protected function intParam(?string $value, int $default, int $min = 1, ?int $max = null): int
-    {
-        $n = (int) ($value ?? $default);
-
-        if ($n < $min) {
-            $n = $min;
-        }
-
-        if ($max !== null && $n > $max) {
-            $n = $max;
-        }
-
-        return $n;
-    }
 }
