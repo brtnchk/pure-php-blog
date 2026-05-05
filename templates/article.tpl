@@ -31,7 +31,7 @@
 
         {if $article.image}
             <figure class="article__image">
-                <img src="{$app_url}/uploads/{$article.image}" alt="{$article.title}">
+                <img src="{$article.image}" alt="{$article.title}" loading="lazy">
             </figure>
         {/if}
 

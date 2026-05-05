@@ -57,12 +57,16 @@ return new class implements Seeder {
         );
 
         foreach ($rows as $i => $row) {
+            $slug = Slugifier::slugify($row['title']) . '-' . ($i + 1);
+
             $articleStmt->execute([
                 'title' => $row['title'],
-                'slug' => Slugifier::slugify($row['title']) . '-' . ($i + 1),
+                'slug' => $slug,
                 'description'  => 'Краткое описание: ' . $row['title'] . '.',
                 'content' => $this->makeBody(),
-                'image' => null,
+                // Lorem Picsum returns the same photo for the same seed, so the
+                // image is stable per article without committing any binaries.
+                'image' => "https://picsum.photos/seed/{$slug}/1200/600",
                 'views' => random_int(0, 500),
                 'published_at' => date('Y-m-d H:i:s', time() - $i * self::HOURS_BETWEEN_POSTS * 3600),
             ]);

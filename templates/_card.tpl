@@ -1,7 +1,7 @@
 <article class="card">
     {if $a.image}
         <a class="card__image" href="{$app_url}/article/{$a.slug|escape:'url'}">
-            <img src="{$app_url}/uploads/{$a.image}" alt="{$a.title}">
+            <img src="{$a.image}" alt="{$a.title}" loading="lazy">
         </a>
     {else}
         <a class="card__image card__image--placeholder" href="{$app_url}/article/{$a.slug|escape:'url'}" aria-hidden="true"></a>
