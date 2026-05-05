@@ -14,6 +14,7 @@ final class ArticleServiceTest extends TestCase
         return new ArticleService($repo ?? $this->createMock(ArticleRepositoryInterface::class));
     }
 
+    /** @return array<string, array{string, string}> */
     public static function knownSorts(): array
     {
         return [
@@ -28,6 +29,7 @@ final class ArticleServiceTest extends TestCase
         self::assertSame($expected, $this->svc()->normalizeSort($input));
     }
 
+    /** @return array<string, array{?string}> */
     public static function unknownSorts(): array
     {
         return [

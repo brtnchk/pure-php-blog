@@ -19,11 +19,21 @@ class ArticleService
         return in_array($sort, self::ALLOWED_SORTS, true) ? $sort : self::SORT_DATE;
     }
 
+    /**
+     * @param list<int> $categoryIds
+     * @return array<int, list<array<string, mixed>>>
+     */
     public function topInCategories(array $categoryIds, int $limit): array
     {
         return $this->articles->recentByCategories($categoryIds, $limit);
     }
 
+    /**
+     * @return array{
+     *   items: list<array<string, mixed>>,
+     *   total: int, pages: int, page: int, per_page: int
+     * }
+     */
     public function listForCategory(int $categoryId, string $sort, int $page, int $perPage): array
     {
         $sort = $this->normalizeSort($sort);
@@ -46,6 +56,13 @@ class ArticleService
         ];
     }
 
+    /**
+     * @return array{
+     *   article: array<string, mixed>,
+     *   categories: list<array<string, mixed>>,
+     *   similar: list<array<string, mixed>>
+     * }|null
+     */
     public function getArticleView(string $slug, int $similarLimit = 3): ?array
     {
         $article = $this->articles->findBySlug($slug);

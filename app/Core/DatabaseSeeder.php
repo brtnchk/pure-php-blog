@@ -34,6 +34,7 @@ final class DatabaseSeeder
         }
     }
 
+    /** @return array<string, string>  name → absolute file path */
     private function discover(): array
     {
         if (!is_dir($this->seedsDir)) {

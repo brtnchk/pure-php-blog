@@ -14,6 +14,12 @@ class CategoryService
     ) {
     }
 
+    /**
+     * @return list<array{
+     *   category: array{id:int, name:string, slug:string, description:?string},
+     *   articles: list<array<string, mixed>>
+     * }>
+     */
     public function buildHomeSections(int $articlesPerCategory): array
     {
         $categories = $this->categories->listWithArticles();
@@ -37,6 +43,16 @@ class CategoryService
         return $sections;
     }
 
+    /**
+     * @return array{
+     *   category: array<string, mixed>,
+     *   articles: list<array<string, mixed>>,
+     *   pagination: array{page:int, pages:int, total:int, per_page:int},
+     *   sort: string,
+     *   sort_date: string,
+     *   sort_views: string
+     * }|null
+     */
     public function getCategoryView(string $slug, ?string $sort, ?string $page): ?array
     {
         $category = $this->categories->findBySlug($slug);

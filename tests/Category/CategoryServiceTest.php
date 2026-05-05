@@ -98,6 +98,7 @@ final class CategoryServiceTest extends TestCase
 
         $bundle = (new CategoryService($catRepo, $articleSvc))->getCategoryView('php', 'views', '2');
 
+        self::assertNotNull($bundle);
         self::assertSame(7, $bundle['category']['id']);
         self::assertSame('views', $bundle['sort']);
         self::assertSame(1, $bundle['pagination']['page']);

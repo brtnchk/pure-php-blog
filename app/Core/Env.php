@@ -4,6 +4,7 @@ namespace App\Core;
 
 final class Env
 {
+    /** @var array<string, string>|null */
     private static ?array $values = null;
 
     public static function load(string $file): void
@@ -11,7 +12,8 @@ final class Env
         $values = [];
 
         if (is_readable($file)) {
-            foreach (file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+            $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($lines === false ? [] : $lines as $line) {
                 if ($line === '' || $line[0] === '#') {
                     continue;
                 }
@@ -47,7 +49,7 @@ final class Env
             return $default;
         }
 
-        return filter_var($value, FILTER_VALIDATE_BOOL);
+        return (bool) filter_var($value, FILTER_VALIDATE_BOOL);
     }
 
     public static function int(string $key, int $default = 0): int

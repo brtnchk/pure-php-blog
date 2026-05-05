@@ -11,6 +11,7 @@ use RuntimeException;
 
 final class MigratorTest extends TestCase
 {
+    /** @return array<string, array{string}> */
     public static function safeNames(): array
     {
         return [
@@ -29,6 +30,7 @@ final class MigratorTest extends TestCase
         $this->expectNotToPerformAssertions();
     }
 
+    /** @return array<string, array{string}> */
     public static function unsafeNames(): array
     {
         return [

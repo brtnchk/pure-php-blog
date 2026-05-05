@@ -10,6 +10,13 @@ final class View
 {
     private static ?Smarty $smarty = null;
 
+    /**
+     * @param array{
+     *   app: array{url:string, debug:bool, env:?string},
+     *   paths: array{templates:string, compile:string, public:string},
+     *   ...
+     * } $config
+     */
     public static function smarty(array $config): Smarty
     {
         if (self::$smarty instanceof Smarty) {
@@ -34,7 +41,10 @@ final class View
         return $smarty;
     }
 
-    /** @throws Exception */
+    /**
+     * @param array<string, mixed> $data
+     * @throws Exception
+     */
     public static function render(string $template, array $data = []): string
     {
         $smarty = self::$smarty;

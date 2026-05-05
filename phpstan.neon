@@ -1,0 +1,15 @@
+parameters:
+    level: 8
+
+    paths:
+        - app
+        - database
+        - public
+        - routes
+        - tests
+
+    excludePaths:
+        analyse:
+            - vendor
+            - templates_c
+            - public/uploads

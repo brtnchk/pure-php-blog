@@ -10,7 +10,10 @@ use RuntimeException;
 
 final class Container
 {
+    /** @var array<string, object> */
     private array $instances = [];
+
+    /** @var array<string, Closure> */
     private array $factories = [];
 
     public function bind(string $id, Closure $factory): void
@@ -19,6 +22,11 @@ final class Container
         unset($this->instances[$id]);
     }
 
+    /**
+     * @template T of object
+     * @param class-string<T>|string $id
+     * @return ($id is class-string<T> ? T : object)
+     */
     public function get(string $id): object
     {
         if (isset($this->instances[$id])) {

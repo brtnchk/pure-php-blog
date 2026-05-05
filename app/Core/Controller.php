@@ -6,7 +6,10 @@ use Smarty\Exception;
 
 abstract class Controller
 {
-    /** @throws Exception */
+    /**
+     * @param array<string, mixed> $data
+     * @throws Exception
+     */
     protected function render(string $template, array $data = []): string
     {
         return View::render($template, $data);

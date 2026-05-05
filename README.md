@@ -30,15 +30,18 @@ npm install
 npm run build       # либо: npm run watch
 ```
 
-## Тесты
-
-Юнит-тесты на сервисный слой через PHPUnit, без БД (репозитории мокаются
-через интерфейсы). Прогоняются в ~10 мс.
+## Качество кода
 
 ```bash
-composer install         # подтянет phpunit
-composer test            # либо: vendor/bin/phpunit
+composer install                 # phpunit + phpstan
+composer test                    # → vendor/bin/phpunit
+composer analyse                 # → vendor/bin/phpstan analyse
 ```
+
+### Тесты
+
+Юнит-тесты на сервисный слой через PHPUnit, без БД (репозитории мокаются
+через интерфейсы). 41 тест, ~12 мс.
 
 Покрыто:
 
@@ -51,6 +54,18 @@ composer test            # либо: vendor/bin/phpunit
   резолв интерфейс → реализация, ребиндинг.
 - `Migrator::assertSafeName` — отклоняет path traversal, точки, пробелы,
   null-byte, переводы строки.
+
+### Статический анализ
+
+PHPStan на **`level 8`** — на этом уровне запрещены:
+
+- необъявленные типы массивов (`array` без `array<K, V>` или shape);
+- обращение к свойствам/ключам у `nullable`-значения без проверки;
+- вызов метода у `T|false` без обработки `false`.
+
+Конфиг: `phpstan.neon`. Запускается на `app/`, `database/`, `public/`,
+`routes/`, `tests/`. Покрытие — 100% кода кроме `app/Config/config.php`
+(плоская карта без логики).
 
 ## Локальный запуск без Docker
 

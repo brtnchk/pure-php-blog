@@ -1,9 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Core;
 
 final class Router
 {
+    /** @var list<array{pattern: string, handler: callable|array{class-string, string}}> */
     private array $routes = [];
 
     public function __construct(
@@ -11,6 +14,9 @@ final class Router
     ) {
     }
 
+    /**
+     * @param callable|array{class-string, string} $handler
+     */
     public function get(string $pattern, callable|array $handler): void
     {
         $this->routes[] = ['pattern' => $pattern, 'handler' => $handler];
@@ -18,8 +24,8 @@ final class Router
 
     public function dispatch(string $uri): mixed
     {
-        $path = parse_url($uri, PHP_URL_PATH) ?: '/';
-        $path = '/' . trim($path, '/');
+        $path = parse_url($uri, PHP_URL_PATH);
+        $path = '/' . trim(is_string($path) ? $path : '/', '/');
 
         foreach ($this->routes as $route) {
             $regex = $this->compile($route['pattern']);
@@ -37,11 +43,15 @@ final class Router
 
     private function compile(string $pattern): string
     {
-        $regex = preg_replace('#\{(\w+)\}#', '(?P<$1>[^/]+)', $pattern);
+        $regex = (string) preg_replace('#\{(\w+)\}#', '(?P<$1>[^/]+)', $pattern);
 
         return '#^' . $regex . '$#';
     }
 
+    /**
+     * @param callable|array{class-string, string} $handler
+     * @param array<string, mixed>                 $params
+     */
     private function call(callable|array $handler, array $params): mixed
     {
         if (is_array($handler)) {

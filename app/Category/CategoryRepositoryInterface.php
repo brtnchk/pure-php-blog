@@ -6,8 +6,9 @@ namespace App\Category;
 
 interface CategoryRepositoryInterface
 {
+    /** @return array<string, mixed>|null */
     public function findBySlug(string $slug): ?array;
 
-    /** @return array<int, array{id:int,name:string,slug:string,description:?string}> */
+    /** @return list<array{id:int, name:string, slug:string, description:?string}> */
     public function listWithArticles(): array;
 }

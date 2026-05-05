@@ -1,8 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Category;
 
 use PDO;
+use PDOStatement;
+use RuntimeException;
 
 final class CategoryRepository implements CategoryRepositoryInterface
 {
@@ -11,6 +15,7 @@ final class CategoryRepository implements CategoryRepositoryInterface
     ) {
     }
 
+    /** @return array<string, mixed>|null */
     public function findBySlug(string $slug): ?array
     {
         $stmt = $this->db->prepare(
@@ -19,9 +24,10 @@ final class CategoryRepository implements CategoryRepositoryInterface
         $stmt->execute(['slug' => $slug]);
         $row = $stmt->fetch();
 
-        return $row ?: null;
+        return is_array($row) ? $row : null;
     }
 
+    /** @return list<array{id:int, name:string, slug:string, description:?string}> */
     public function listWithArticles(): array
     {
         $sql = 'SELECT c.id, c.name, c.slug, c.description
@@ -30,6 +36,13 @@ final class CategoryRepository implements CategoryRepositoryInterface
                 GROUP BY c.id, c.name, c.slug, c.description
                 ORDER BY c.name ASC';
 
-        return $this->db->query($sql)->fetchAll();
+        $stmt = $this->db->query($sql);
+        if (!$stmt instanceof PDOStatement) {
+            // Unreachable with PDO::ERRMODE_EXCEPTION, but PHPStan needs the assert.
+            throw new RuntimeException('Failed to execute categories query.');
+        }
+
+        /** @var list<array{id:int, name:string, slug:string, description:?string}> */
+        return $stmt->fetchAll();
     }
 }

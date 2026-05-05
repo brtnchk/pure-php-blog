@@ -21,6 +21,7 @@ final class ArticleRepository implements ArticleRepositoryInterface
     ) {
     }
 
+    /** @return array<string, mixed>|null */
     public function findBySlug(string $slug): ?array
     {
         $stmt = $this->db->prepare(
@@ -30,9 +31,10 @@ final class ArticleRepository implements ArticleRepositoryInterface
         $stmt->execute(['slug' => $slug]);
         $row = $stmt->fetch();
 
-        return $row ?: null;
+        return is_array($row) ? $row : null;
     }
 
+    /** @return list<array<string, mixed>> */
     public function categoriesOf(int $articleId): array
     {
         $stmt = $this->db->prepare(
@@ -44,9 +46,14 @@ final class ArticleRepository implements ArticleRepositoryInterface
         );
         $stmt->execute(['id' => $articleId]);
 
+        /** @var list<array<string, mixed>> */
         return $stmt->fetchAll();
     }
 
+    /**
+     * @param list<int> $categoryIds
+     * @return array<int, list<array<string, mixed>>>
+     */
     public function recentByCategories(array $categoryIds, int $limit): array
     {
         if ($categoryIds === []) {
@@ -72,7 +79,9 @@ final class ArticleRepository implements ArticleRepositoryInterface
 
         $grouped = [];
 
-        foreach ($stmt->fetchAll() as $row) {
+        /** @var list<array<string, mixed>> $rows */
+        $rows = $stmt->fetchAll();
+        foreach ($rows as $row) {
             $grouped[(int) $row['category_id']][] = $row;
         }
 
@@ -92,6 +101,7 @@ final class ArticleRepository implements ArticleRepositoryInterface
         return (int) $stmt->fetchColumn();
     }
 
+    /** @return list<array<string, mixed>> */
     public function listByCategory(int $categoryId, string $sort, int $limit, int $offset): array
     {
         if (!isset(self::ORDER_BY[$sort])) {
@@ -111,9 +121,11 @@ final class ArticleRepository implements ArticleRepositoryInterface
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
 
+        /** @var list<array<string, mixed>> */
         return $stmt->fetchAll();
     }
 
+    /** @return list<array<string, mixed>> */
     public function similar(int $articleId, int $limit): array
     {
         $sql = 'SELECT a.id, a.title, a.slug, a.description, a.image, a.views, a.published_at,
@@ -131,6 +143,7 @@ final class ArticleRepository implements ArticleRepositoryInterface
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
 
+        /** @var list<array<string, mixed>> */
         return $stmt->fetchAll();
     }
 

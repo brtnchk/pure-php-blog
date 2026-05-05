@@ -10,6 +10,9 @@ final class Database
 {
     private static ?PDO $pdo = null;
 
+    /**
+     * @param array{host:string, port:int, name:string, charset:string, user:string, pass:string} $config
+     */
     public static function connection(array $config): PDO
     {
         if (self::$pdo instanceof PDO) {

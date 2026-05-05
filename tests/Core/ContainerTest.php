@@ -82,7 +82,6 @@ final class ContainerTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageMatches('/does not exist/');
 
-        /** @phpstan-ignore-next-line  intentionally non-existent */
         $c->get('App\\Doesnt\\Exist');
     }
 

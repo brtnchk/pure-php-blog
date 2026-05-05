@@ -3,6 +3,7 @@
 namespace App\Core;
 
 use PDO;
+use PDOStatement;
 use RuntimeException;
 
 /**
@@ -84,9 +85,9 @@ final class Migrator
     public function fresh(): int
     {
         $this->ensureRegistry();
-        $applied = $this->db->query(
-            'SELECT name FROM migrations ORDER BY id DESC'
-        )->fetchAll(PDO::FETCH_COLUMN);
+        /** @var list<string> $applied */
+        $applied = $this->query('SELECT name FROM migrations ORDER BY id DESC')
+                        ->fetchAll(PDO::FETCH_COLUMN);
 
         foreach ($applied as $name) {
             self::assertSafeName($name);
@@ -114,6 +115,7 @@ final class Migrator
         );
     }
 
+    /** @return array<string, string>  pending name → file path */
     private function pending(): array
     {
         $applied = $this->appliedNames();
@@ -121,6 +123,7 @@ final class Migrator
         return array_diff_key($this->discoverAll(), $applied);
     }
 
+    /** @return array<string, string>  name → absolute file path */
     private function discoverAll(): array
     {
         if (!is_dir($this->migrationsDir)) {
@@ -138,21 +141,26 @@ final class Migrator
         return $result;
     }
 
+    /** @return array<string, true>  set of names already applied */
     private function appliedNames(): array
     {
-        $names = $this->db->query('SELECT name FROM migrations')->fetchAll(PDO::FETCH_COLUMN);
+        /** @var list<string> $names */
+        $names = $this->query('SELECT name FROM migrations')->fetchAll(PDO::FETCH_COLUMN);
 
         return array_fill_keys($names, true);
     }
 
     private function nextBatch(): int
     {
-        return ((int) $this->db->query('SELECT COALESCE(MAX(batch), 0) FROM migrations')->fetchColumn()) + 1;
+        $stmt = $this->query('SELECT COALESCE(MAX(batch), 0) FROM migrations');
+        return ((int) $stmt->fetchColumn()) + 1;
     }
 
+    /** @return list<string> */
     private function lastBatchMigrations(): array
     {
-        $batch = (int) $this->db->query('SELECT COALESCE(MAX(batch), 0) FROM migrations')->fetchColumn();
+        $stmt = $this->query('SELECT COALESCE(MAX(batch), 0) FROM migrations');
+        $batch = (int) $stmt->fetchColumn();
 
         if ($batch === 0) {
             return [];
@@ -161,7 +169,24 @@ final class Migrator
         $stmt = $this->db->prepare('SELECT name FROM migrations WHERE batch = :b ORDER BY id ASC');
         $stmt->execute(['b' => $batch]);
 
+        /** @var list<string> */
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    /**
+     * Executes a query and returns the statement.
+     *
+     * Under PDO::ERRMODE_EXCEPTION (which we always use), PDO::query() never
+     * returns false — it throws on failure. The runtime guard is kept so the
+     * static analyser doesnt have to take that on faith.
+     */
+    private function query(string $sql): PDOStatement
+    {
+        $stmt = $this->db->query($sql);
+        if (!$stmt instanceof PDOStatement) {
+            throw new RuntimeException("Query failed: {$sql}");
+        }
+        return $stmt;
     }
 
     private function register(string $name, int $batch): void
