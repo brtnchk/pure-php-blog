@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Core;
 
@@ -23,8 +25,7 @@ final class Migrator
     public function __construct(
         private PDO $db,
         private string $migrationsDir,
-    ) {
-    }
+    ) {}
 
     public function migrate(): int
     {
@@ -69,7 +70,7 @@ final class Migrator
     }
 
     /**
-     * @return array<string, string>  name → 'applied' | 'pending'
+     * @return array<string, string> name → 'applied' | 'pending'
      */
     public function status(): array
     {
@@ -101,6 +102,17 @@ final class Migrator
         return $this->migrate();
     }
 
+    /**
+     * Exposed so it can be unit-tested directly. Pure function on a string —
+     * if it ever grows logic, factor it out into a MigrationName VO.
+     */
+    public static function assertSafeName(string $name): void
+    {
+        if (preg_match('/^[A-Za-z0-9_-]+$/', $name) !== 1) {
+            throw new RuntimeException("Refusing to use migration name as a path: {$name}");
+        }
+    }
+
     private function ensureRegistry(): void
     {
         $this->db->exec(
@@ -111,7 +123,7 @@ final class Migrator
                 ran_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 PRIMARY KEY (id),
                 UNIQUE KEY uniq_migrations_name (name)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci'
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
         );
     }
 
@@ -207,20 +219,9 @@ final class Migrator
 
         if (!$migration instanceof Migration) {
             throw new RuntimeException(
-                "Migration file {$file} must return an instance of " . Migration::class
+                "Migration file {$file} must return an instance of " . Migration::class,
             );
         }
         return $migration;
-    }
-    
-    /**
-     * Exposed so it can be unit-tested directly. Pure function on a string —
-     * if it ever grows logic, factor it out into a MigrationName VO.
-     */
-    public static function assertSafeName(string $name): void
-    {
-        if (preg_match('/^[A-Za-z0-9_-]+$/', $name) !== 1) {
-            throw new RuntimeException("Refusing to use migration name as a path: {$name}");
-        }
     }
 }

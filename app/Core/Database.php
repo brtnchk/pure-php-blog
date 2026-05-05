@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Core;
 
@@ -24,7 +26,7 @@ final class Database
             $config['host'],
             $config['port'],
             $config['name'],
-            $config['charset']
+            $config['charset'],
         );
 
         try {

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use App\Core\Seeder;
 
@@ -17,7 +19,7 @@ return new class implements Seeder {
 
         $stmt = $db->prepare(
             'INSERT INTO categories (name, slug, description)
-             VALUES (:name, :slug, :description)'
+             VALUES (:name, :slug, :description)',
         );
 
         $idsBySlug = [];

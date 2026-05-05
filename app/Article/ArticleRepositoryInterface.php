@@ -14,7 +14,8 @@ interface ArticleRepositoryInterface
 
     /**
      * @param list<int> $categoryIds
-     * @return array<int, list<array<string, mixed>>>  keyed by category_id
+     *
+     * @return array<int, list<array<string, mixed>>> keyed by category_id
      */
     public function recentByCategories(array $categoryIds, int $limit): array;
 

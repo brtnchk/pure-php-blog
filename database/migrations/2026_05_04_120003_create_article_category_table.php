@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use App\Core\Migration;
 
@@ -13,7 +15,7 @@ return new class implements Migration {
                 KEY idx_ac_category (category_id),
                 CONSTRAINT fk_ac_article  FOREIGN KEY (article_id)  REFERENCES articles   (id) ON DELETE CASCADE,
                 CONSTRAINT fk_ac_category FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci'
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
         );
     }
 

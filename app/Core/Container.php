@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Core;
 
@@ -24,7 +26,9 @@ final class Container
 
     /**
      * @template T of object
+     *
      * @param class-string<T>|string $id
+     *
      * @return ($id is class-string<T> ? T : object)
      */
     public function get(string $id): object

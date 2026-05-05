@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Controllers;
 
@@ -9,8 +11,7 @@ final class HomeController extends Controller
 {
     public function __construct(
         private CategoryService $categories,
-    ) {
-    }
+    ) {}
 
     public function index(): string
     {

@@ -11,8 +11,7 @@ final class Router
 
     public function __construct(
         private Container $container,
-    ) {
-    }
+    ) {}
 
     /**
      * @param callable|array{class-string, string} $handler
@@ -30,7 +29,7 @@ final class Router
         foreach ($this->routes as $route) {
             $regex = $this->compile($route['pattern']);
             if (preg_match($regex, $path, $m)) {
-                $params = array_filter($m, static fn ($k) => !is_int($k), ARRAY_FILTER_USE_KEY);
+                $params = array_filter($m, static fn($k) => !is_int($k), ARRAY_FILTER_USE_KEY);
 
                 return $this->call($route['handler'], $params);
             }
@@ -50,7 +49,7 @@ final class Router
 
     /**
      * @param callable|array{class-string, string} $handler
-     * @param array<string, mixed>                 $params
+     * @param array<string, mixed> $params
      */
     private function call(callable|array $handler, array $params): mixed
     {

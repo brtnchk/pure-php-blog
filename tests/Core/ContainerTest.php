@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Core;
 
@@ -12,19 +14,10 @@ use App\Core\Container;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use stdClass;
 
 final class ContainerTest extends TestCase
 {
-    private function makeContainer(): Container
-    {
-        $c = new Container();
-        // PDO is the only thing autowiring can't resolve on its own.
-        $c->bind(PDO::class, fn () => $this->createMock(PDO::class));
-        $c->bind(ArticleRepositoryInterface::class,  fn (Container $c) => $c->get(ArticleRepository::class));
-        $c->bind(CategoryRepositoryInterface::class, fn (Container $c) => $c->get(CategoryRepository::class));
-        return $c;
-    }
-
     public function testGetMemoizesInstances(): void
     {
         $c = $this->makeContainer();
@@ -88,12 +81,22 @@ final class ContainerTest extends TestCase
     public function testRebindReplacesPreviouslyResolvedInstance(): void
     {
         $c = new Container();
-        $c->bind('id', static fn () => new \stdClass());
+        $c->bind('id', static fn() => new stdClass());
 
         $first = $c->get('id');
-        $c->bind('id', static fn () => new \stdClass());
+        $c->bind('id', static fn() => new stdClass());
         $second = $c->get('id');
 
         self::assertNotSame($first, $second);
+    }
+
+    private function makeContainer(): Container
+    {
+        $c = new Container();
+        // PDO is the only thing autowiring can't resolve on its own.
+        $c->bind(PDO::class, fn() => $this->createMock(PDO::class));
+        $c->bind(ArticleRepositoryInterface::class, fn(Container $c) => $c->get(ArticleRepository::class));
+        $c->bind(CategoryRepositoryInterface::class, fn(Container $c) => $c->get(CategoryRepository::class));
+        return $c;
     }
 }

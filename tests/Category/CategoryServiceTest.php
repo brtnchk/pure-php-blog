@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Category;
 
@@ -42,9 +44,9 @@ final class CategoryServiceTest extends TestCase
         $sections = (new CategoryService($catRepo, $articleSvc))->buildHomeSections(3);
 
         self::assertCount(2, $sections);
-        self::assertSame('A',  $sections[0]['category']['name']);
-        self::assertSame(10,   $sections[0]['articles'][0]['id']);
-        self::assertCount(2,   $sections[1]['articles']);
+        self::assertSame('A', $sections[0]['category']['name']);
+        self::assertSame(10, $sections[0]['articles'][0]['id']);
+        self::assertCount(2, $sections[1]['articles']);
     }
 
     public function testBuildHomeSectionsTolersatesMissingArticlesForACategory(): void
@@ -104,7 +106,7 @@ final class CategoryServiceTest extends TestCase
         self::assertSame(1, $bundle['pagination']['page']);
         self::assertSame(1, $bundle['pagination']['total']);
         self::assertSame(6, $bundle['pagination']['per_page']);
-        self::assertSame(ArticleService::SORT_DATE,  $bundle['sort_date']);
+        self::assertSame(ArticleService::SORT_DATE, $bundle['sort_date']);
         self::assertSame(ArticleService::SORT_VIEWS, $bundle['sort_views']);
     }
 

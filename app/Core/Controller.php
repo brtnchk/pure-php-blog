@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Core;
 
@@ -8,6 +10,7 @@ abstract class Controller
 {
     /**
      * @param array<string, mixed> $data
+     *
      * @throws Exception
      */
     protected function render(string $template, array $data = []): string

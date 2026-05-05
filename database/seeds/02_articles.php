@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use App\Core\Seeder;
 use App\Core\Slugifier;
@@ -12,7 +14,7 @@ return new class implements Seeder {
 
         if (!is_array($categoryIds) || $categoryIds === []) {
             throw new RuntimeException(
-                "Article seeder requires \$context['categoryIds'] from a previous seeder."
+                "Article seeder requires \$context['categoryIds'] from a previous seeder.",
             );
         }
 
@@ -49,11 +51,11 @@ return new class implements Seeder {
 
         $articleStmt = $db->prepare(
             'INSERT INTO articles (title, slug, description, content, image, views, published_at)
-             VALUES (:title, :slug, :description, :content, :image, :views, :published_at)'
+             VALUES (:title, :slug, :description, :content, :image, :views, :published_at)',
         );
         $linkStmt = $db->prepare(
             'INSERT INTO article_category (article_id, category_id)
-             VALUES (:article_id, :category_id)'
+             VALUES (:article_id, :category_id)',
         );
 
         foreach ($rows as $i => $row) {

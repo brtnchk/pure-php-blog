@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Core;
 
@@ -10,8 +12,7 @@ final class DatabaseSeeder
     public function __construct(
         private PDO $db,
         private string $seedsDir,
-    ) {
-    }
+    ) {}
 
     public function run(): void
     {
@@ -23,7 +24,7 @@ final class DatabaseSeeder
                 $seeder = require $file;
                 if (!$seeder instanceof Seeder) {
                     throw new RuntimeException(
-                        "Seed file {$file} must return an instance of " . Seeder::class
+                        "Seed file {$file} must return an instance of " . Seeder::class,
                     );
                 }
 

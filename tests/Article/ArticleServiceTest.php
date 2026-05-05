@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Article;
 
@@ -9,11 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 final class ArticleServiceTest extends TestCase
 {
-    private function svc(?ArticleRepositoryInterface $repo = null): ArticleService
-    {
-        return new ArticleService($repo ?? $this->createMock(ArticleRepositoryInterface::class));
-    }
-
     /** @return array<string, array{string, string}> */
     public static function knownSorts(): array
     {
@@ -36,7 +33,7 @@ final class ArticleServiceTest extends TestCase
             'null' => [null],
             'empty' => [''],
             'garbage' => ['haxx'],
-            'sqli-attempt'=> ['1; DROP TABLE articles --'],
+            'sqli-attempt' => ['1; DROP TABLE articles --'],
             'wrong-case' => ['DATE'],
         ];
     }
@@ -58,9 +55,9 @@ final class ArticleServiceTest extends TestCase
         $r = $this->svc($repo)->listForCategory(7, 'date', 1, 6);
 
         self::assertSame(15, $r['total']);
-        self::assertSame(3,  $r['pages']);
-        self::assertSame(1,  $r['page']);
-        self::assertSame(6,  $r['per_page']);
+        self::assertSame(3, $r['pages']);
+        self::assertSame(1, $r['page']);
+        self::assertSame(6, $r['per_page']);
     }
 
     public function testListForCategoryClampsPageAboveMax(): void
@@ -101,9 +98,9 @@ final class ArticleServiceTest extends TestCase
         $r = $this->svc($repo)->listForCategory(7, 'date', 1, 6);
 
         self::assertSame([], $r['items']);
-        self::assertSame(0,  $r['total']);
-        self::assertSame(1,  $r['pages']);   // max(1, ceil(0/6)) = 1
-        self::assertSame(1,  $r['page']);
+        self::assertSame(0, $r['total']);
+        self::assertSame(1, $r['pages']);   // max(1, ceil(0/6)) = 1
+        self::assertSame(1, $r['page']);
     }
 
     public function testListForCategoryNormalisesUnknownSortBeforeQuery(): void
@@ -168,5 +165,10 @@ final class ArticleServiceTest extends TestCase
         $r = $this->svc($repo)->topInCategories([1, 2], 3);
 
         self::assertArrayHasKey(1, $r);
+    }
+
+    private function svc(?ArticleRepositoryInterface $repo = null): ArticleService
+    {
+        return new ArticleService($repo ?? $this->createMock(ArticleRepositoryInterface::class));
     }
 }

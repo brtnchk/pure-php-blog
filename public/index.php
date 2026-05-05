@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use App\Article\ArticleRepository;
 use App\Article\ArticleRepositoryInterface;
@@ -26,9 +28,9 @@ if ($config['app']['debug']) {
 View::smarty($config);
 
 $container = new Container();
-$container->bind(PDO::class, static fn () => Database::connection($config['db']));
-$container->bind(ArticleRepositoryInterface::class,  static fn (Container $c) => $c->get(ArticleRepository::class));
-$container->bind(CategoryRepositoryInterface::class, static fn (Container $c) => $c->get(CategoryRepository::class));
+$container->bind(PDO::class, static fn() => Database::connection($config['db']));
+$container->bind(ArticleRepositoryInterface::class, static fn(Container $c) => $c->get(ArticleRepository::class));
+$container->bind(CategoryRepositoryInterface::class, static fn(Container $c) => $c->get(CategoryRepository::class));
 
 $router = new Router($container);
 $registerRoutes = require $root . '/routes/web.php';

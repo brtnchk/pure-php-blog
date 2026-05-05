@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Article;
 
@@ -18,15 +20,14 @@ final class ArticleRepository implements ArticleRepositoryInterface
 
     public function __construct(
         private PDO $db,
-    ) {
-    }
+    ) {}
 
     /** @return array<string, mixed>|null */
     public function findBySlug(string $slug): ?array
     {
         $stmt = $this->db->prepare(
             'SELECT id, title, slug, description, content, image, views, published_at
-             FROM articles WHERE slug = :slug LIMIT 1'
+             FROM articles WHERE slug = :slug LIMIT 1',
         );
         $stmt->execute(['slug' => $slug]);
         $row = $stmt->fetch();
@@ -42,7 +43,7 @@ final class ArticleRepository implements ArticleRepositoryInterface
              FROM categories c
              INNER JOIN article_category ac ON ac.category_id = c.id
              WHERE ac.article_id = :id
-             ORDER BY c.name ASC'
+             ORDER BY c.name ASC',
         );
         $stmt->execute(['id' => $articleId]);
 
@@ -52,6 +53,7 @@ final class ArticleRepository implements ArticleRepositoryInterface
 
     /**
      * @param list<int> $categoryIds
+     *
      * @return array<int, list<array<string, mixed>>>
      */
     public function recentByCategories(array $categoryIds, int $limit): array
@@ -93,7 +95,7 @@ final class ArticleRepository implements ArticleRepositoryInterface
         $stmt = $this->db->prepare(
             'SELECT COUNT(*) FROM articles a
              INNER JOIN article_category ac ON ac.article_id = a.id
-             WHERE ac.category_id = :cid'
+             WHERE ac.category_id = :cid',
         );
 
         $stmt->execute(['cid' => $categoryId]);

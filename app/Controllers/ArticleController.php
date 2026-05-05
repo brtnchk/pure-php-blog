@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Controllers;
 
@@ -10,8 +12,7 @@ final class ArticleController extends Controller
 {
     public function __construct(
         private ArticleService $articles,
-    ) {
-    }
+    ) {}
 
     /** @throws Exception */
     public function show(string $slug): string

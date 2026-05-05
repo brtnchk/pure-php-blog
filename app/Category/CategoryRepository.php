@@ -12,14 +12,13 @@ final class CategoryRepository implements CategoryRepositoryInterface
 {
     public function __construct(
         private PDO $db,
-    ) {
-    }
+    ) {}
 
     /** @return array<string, mixed>|null */
     public function findBySlug(string $slug): ?array
     {
         $stmt = $this->db->prepare(
-            'SELECT id, name, slug, description FROM categories WHERE slug = :slug LIMIT 1'
+            'SELECT id, name, slug, description FROM categories WHERE slug = :slug LIMIT 1',
         );
         $stmt->execute(['slug' => $slug]);
         $row = $stmt->fetch();

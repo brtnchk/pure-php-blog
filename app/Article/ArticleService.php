@@ -1,18 +1,20 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Article;
 
 class ArticleService
 {
     public const SORT_DATE  = 'date';
+
     public const SORT_VIEWS = 'views';
 
     private const ALLOWED_SORTS = [self::SORT_DATE, self::SORT_VIEWS];
 
     public function __construct(
         private ArticleRepositoryInterface $articles,
-    ) {
-    }
+    ) {}
 
     public function normalizeSort(?string $sort): string
     {
@@ -21,6 +23,7 @@ class ArticleService
 
     /**
      * @param list<int> $categoryIds
+     *
      * @return array<int, list<array<string, mixed>>>
      */
     public function topInCategories(array $categoryIds, int $limit): array

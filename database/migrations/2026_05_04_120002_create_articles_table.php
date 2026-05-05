@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use App\Core\Migration;
 
@@ -20,7 +22,7 @@ return new class implements Migration {
                 UNIQUE KEY uniq_articles_slug (slug),
                 KEY idx_articles_published_at (published_at),
                 KEY idx_articles_views (views)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci'
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',
         );
     }
 

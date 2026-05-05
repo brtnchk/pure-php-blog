@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Category;
 
@@ -11,8 +13,7 @@ class CategoryService
     public function __construct(
         private CategoryRepositoryInterface $categories,
         private ArticleService $articles,
-    ) {
-    }
+    ) {}
 
     /**
      * @return list<array{
@@ -28,7 +29,7 @@ class CategoryService
             return [];
         }
 
-        $ids = array_map(static fn ($c) => (int) $c['id'], $categories);
+        $ids = array_map(static fn($c) => (int) $c['id'], $categories);
         $recent = $this->articles->topInCategories($ids, $articlesPerCategory);
 
         $sections = [];
