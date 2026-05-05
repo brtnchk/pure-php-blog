@@ -8,11 +8,11 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 COPY composer.json ./
-RUN composer install --no-interaction --no-progress --prefer-dist --no-scripts || true
+RUN composer install --no-interaction --no-progress --prefer-dist --no-scripts
 
 COPY . .
 
-RUN chown -R www-data:www-data /var/www/html/templates_c /var/www/html/cache /var/www/html/public/uploads
+RUN chown -R www-data:www-data /var/www/html/templates_c /var/www/html/public/uploads
 
 EXPOSE 9000
 CMD ["php-fpm"]

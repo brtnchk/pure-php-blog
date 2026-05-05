@@ -15,6 +15,7 @@ services:
             dockerfile: docker/php/Dockerfile
         volumes:
             - ./:/var/www/html
+            - /var/www/html/vendor
         environment:
             DB_HOST: mysql
             DB_PORT: 3306
