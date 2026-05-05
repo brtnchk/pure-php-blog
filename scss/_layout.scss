@@ -26,14 +26,13 @@ img { max-width: 100%; display: block; }
 .site-header {
     background: $color-surface;
     border-bottom: 1px solid $color-border;
-    box-shadow: $shadow-sm;
 
     .container {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding-top: 16px;
-        padding-bottom: 16px;
+        padding-top: 18px;
+        padding-bottom: 18px;
     }
 
     &__brand {
@@ -42,35 +41,44 @@ img { max-width: 100%; display: block; }
         color: $color-text;
     }
 
-    &__nav a { margin-left: 16px; }
+    &__nav a {
+        margin-left: 18px;
+        color: $color-muted;
+        &:hover { color: $color-text; text-decoration: none; }
+    }
 }
 
-.site-main { padding: 32px 0 48px; }
+.site-main {
+    padding: 40px 0 56px;
+}
 
 .site-footer {
-    border-top: 1px solid $color-border;
-    background: $color-surface;
-    padding: 24px 0;
-    color: $color-muted;
+    background: $color-footer-bg;
+    color: $color-footer-text;
+    padding: 22px 0;
     text-align: center;
-}
-
-.page-title {
-    font-size: 28px;
-    margin: 0 0 24px;
+    font-size: 13px;
 }
 
 .empty {
     color: $color-muted;
     background: $color-surface;
     border: 1px dashed $color-border;
-    padding: 24px;
+    padding: 28px;
     border-radius: $radius;
     text-align: center;
 }
 
 .breadcrumbs {
-    margin-bottom: 16px;
+    margin-bottom: 18px;
     color: $color-muted;
     font-size: 14px;
+
+    a { color: $color-muted; }
+    a:hover { color: $color-text; }
+}
+
+.page-title {
+    font-size: 28px;
+    margin: 0 0 24px;
 }

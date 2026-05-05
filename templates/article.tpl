@@ -17,7 +17,15 @@
                 <time datetime="{$article.published_at}">
                     {$article.published_at|date_format:"d.m.Y"}
                 </time>
-                <span>{$article.views} просмотр.</span>
+                <span class="article__views" title="{$article.views} просмотров">
+                    <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none"
+                         stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    {$article.views}
+                </span>
             </div>
         </header>
 

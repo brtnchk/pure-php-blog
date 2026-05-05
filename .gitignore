@@ -7,6 +7,7 @@
 .env.local
 .DS_Store
 .idea/
+/[0-9]*.png
 .vscode/
 composer.lock
 *.log

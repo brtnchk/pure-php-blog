@@ -1,21 +1,25 @@
-$color-bg:      #f7f7f8;
-$color-surface: #ffffff;
-$color-text:    #1f2330;
-$color-muted:   #6b7280;
-$color-border:  #e5e7eb;
-$color-primary: #2563eb;
-$color-primary-dark: #1d4ed8;
-$color-accent:  #16a34a;
+// palette — flat, minimal
+$color-bg:          #f4f5f7;
+$color-surface:     #ffffff;
+$color-text:        #1c1f26;
+$color-muted:       #6c7280;
+$color-border:      #e3e5ea;
+$color-divider:     #d8dbe1;
 
-$radius:   8px;
-$radius-lg: 12px;
+$color-primary:      #2962ff;
+$color-primary-dark: #0039cb;
 
-$container-max: 1120px;
-$gap:    20px;
+$color-footer-bg:    #2a3140;
+$color-footer-text:  #c8ccd6;
+
+$radius:    6px;
+$radius-lg: 10px;
+
+$container-max: 1140px;
+$gap:    24px;
 $gap-sm: 12px;
 
-$shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-$shadow:    0 4px 12px rgba(0,0,0,0.06);
+$shadow-sm: 0 1px 1px rgba(20, 25, 40, 0.04);
 
 $bp-sm: 640px;
 $bp-md: 900px;
